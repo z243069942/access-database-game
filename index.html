@@ -138,6 +138,25 @@ body{font-family:'Microsoft YaHei',Arial,sans-serif;background:#1a1a2e;color:#e0
 .highlight{color:#ffd700;font-weight:bold}
 .code-inline{background:#0a0a1a;padding:2px 6px;border-radius:4px;font-family:Consolas,monospace;font-size:0.85em;color:#a8dadc}
 
+/* SQL代码排序题型 */
+.sort-container{margin-top:10px}
+.sort-instruction{font-size:0.85em;color:#a8dadc;margin-bottom:12px;padding:8px 12px;background:rgba(168,218,220,0.08);border-radius:8px;border-left:3px solid #e94560}
+.sort-fragments{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.sort-frag-btn{background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.4);border-radius:8px;padding:8px 12px;color:#e0e0e0;cursor:pointer;font-size:0.82em;transition:all .25s;font-family:Consolas,monospace;line-height:1.5}
+.sort-frag-btn:hover:not(:disabled){background:rgba(233,69,96,0.25);border-color:#e94560}
+.sort-frag-btn.used{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.1);color:#555;cursor:default;text-decoration:line-through}
+.sort-frag-btn:disabled{cursor:not-allowed;opacity:0.5}
+.sort-answer-area{min-height:60px;background:rgba(255,255,255,0.03);border:2px dashed rgba(255,255,255,0.15);border-radius:10px;padding:12px;margin-bottom:14px;transition:all .3s}
+.sort-answer-placeholder{color:#555;font-size:0.85em;text-align:center;padding:10px}
+.sort-answer-list{display:flex;flex-direction:column;gap:6px}
+.sort-answer-item{display:flex;align-items:center;gap:10px;background:rgba(15,110,86,0.15);border:1px solid rgba(15,110,86,0.3);border-radius:8px;padding:8px 12px;cursor:pointer;transition:all .2s;font-size:0.85em;font-family:Consolas,monospace}
+.sort-answer-item:hover{background:rgba(233,69,96,0.15);border-color:rgba(233,69,96,0.4)}
+.sort-order{background:#e94560;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.sort-frag-text{flex:1;color:#e0e0e0;line-height:1.5}
+.sort-remove{color:#e94560;font-weight:bold;cursor:pointer;padding:0 4px;font-size:1.1em}
+.sort-remove:hover{color:#ff6b6b}
+.sort-btn-area{display:flex;gap:10px;justify-content:center}
+
 /* 通用 */
 .hidden{display:none!important}
 .flex-center{display:flex;align-items:center;justify-content:center;gap:10px}
@@ -191,7 +210,7 @@ body{font-family:'Microsoft YaHei',Arial,sans-serif;background:#1a1a2e;color:#e0
       <div class="progress-text" id="progress-text">第 1 / 10 题</div>
     </div>
     <div class="timer-box" id="timer-box">
-      <div class="timer-num" id="timer-num">30</div>
+      <div class="timer-num" id="timer-num">60</div>
       <div class="timer-lab">秒</div>
     </div>
     <div class="game-score">
