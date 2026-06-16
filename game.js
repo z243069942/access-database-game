@@ -243,14 +243,14 @@ function showQuestion() {
     const resetBtn = document.createElement('button');
     resetBtn.className = 'confirm-btn';
     resetBtn.textContent = '重置排序';
-    resetBtn.onclick = () => resetSortAnswer(q);
+    resetBtn.onclick = () => window.resetSortAnswer();
     resetBtn.style.marginRight = '10px';
     btnArea.appendChild(resetBtn);
-    
+
     const confirmBtn = document.createElement('button');
     confirmBtn.className = 'confirm-btn';
     confirmBtn.textContent = '确认答案';
-    confirmBtn.onclick = () => submitSortAnswer(q);
+    confirmBtn.onclick = () => window.submitSortAnswer();
     btnArea.appendChild(confirmBtn);
     
     sortArea.appendChild(btnArea);
