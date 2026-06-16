@@ -9,8 +9,9 @@ const state = {
   score: 0,
   correct: 0,
   timer: null,
-  timeLeft: 30,
+  timeLeft: 60,
   answered: false,
+  userSortAnswer: [], // SQL排序题的用户答案
   progress: JSON.parse(localStorage.getItem('accessGameProgress') || '{}'),
   totalScore: parseInt(localStorage.getItem('accessGameScore') || '0')
 };
@@ -149,12 +150,13 @@ function showQuestion() {
 
   // 题型标记
   const badge = document.getElementById('q-type-badge');
-  const typeMap = { single: '单选题', judge: '判断题', fill: '填空题', multi: '多选题' };
+  const typeMap = { single: '单选题', judge: '判断题', fill: '填空题', multi: '多选题', sort: 'SQL代码排序' };
   badge.textContent = typeMap[q.type] || '单选题';
   badge.className = 'q-type-badge';
   if (q.type === 'judge') badge.classList.add('judge');
   if (q.type === 'fill') badge.classList.add('fill');
   if (q.type === 'multi') badge.classList.add('multi');
+  if (q.type === 'sort') badge.classList.add('sort');
 
   // 题目文字
   document.getElementById('q-text').textContent = q.text;
@@ -192,6 +194,60 @@ function showQuestion() {
       };
       container.appendChild(btn);
     });
+  } else if (q.type === 'sort') {
+    // SQL代码排序题型
+    state.userSortAnswer = []; // 重置用户答案
+    
+    // 创建排序题界面
+    const sortArea = document.createElement('div');
+    sortArea.className = 'sort-container';
+    
+    // 说明文字
+    const instruction = document.createElement('div');
+    instruction.className = 'sort-instruction';
+    instruction.textContent = '👇 点击下方代码片段，按正确顺序添加到下方答案区：';
+    sortArea.appendChild(instruction);
+    
+    // 待选区（可点击的代码片段）
+    const fragmentArea = document.createElement('div');
+    fragmentArea.className = 'sort-fragments';
+    fragmentArea.id = 'sort-fragments';
+    q.fragments.forEach((frag, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'sort-frag-btn';
+      btn.textContent = `${i + 1}. ${frag}`;
+      btn.dataset.index = i;
+      btn.onclick = () => selectSortFragment(i, btn, q);
+      fragmentArea.appendChild(btn);
+    });
+    sortArea.appendChild(fragmentArea);
+    
+    // 答案区（显示用户已选择的顺序）
+    const answerArea = document.createElement('div');
+    answerArea.className = 'sort-answer-area';
+    answerArea.id = 'sort-answer-area';
+    answerArea.innerHTML = '<div class="sort-answer-placeholder">答案区（点击上方片段按正确顺序添加）</div>';
+    sortArea.appendChild(answerArea);
+    
+    // 按钮区
+    const btnArea = document.createElement('div');
+    btnArea.className = 'sort-btn-area';
+    
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'confirm-btn';
+    resetBtn.textContent = '重置排序';
+    resetBtn.onclick = () => resetSortAnswer(q);
+    resetBtn.style.marginRight = '10px';
+    btnArea.appendChild(resetBtn);
+    
+    const confirmBtn = document.createElement('button');
+    confirmBtn.className = 'confirm-btn';
+    confirmBtn.textContent = '确认答案';
+    confirmBtn.onclick = () => submitSortAnswer(q);
+    btnArea.appendChild(confirmBtn);
+    
+    sortArea.appendChild(btnArea);
+    container.appendChild(sortArea);
   } else if (q.type === 'fill') {
     const input = document.createElement('input');
     input.type = 'text';
@@ -453,6 +509,122 @@ function renderKnSections(sections) {
     }
     return `<div class="kn-section"><h4>${sec.title}</h4>${body}</div>`;
   }).join('');
+}
+
+// ===== SQL代码排序题型函数 =====
+function selectSortFragment(idx, btn, q) {
+  if (state.answered) return;
+  if (state.userSortAnswer.includes(idx)) return; // 已选过
+  
+  // 添加到用户答案
+  state.userSortAnswer.push(idx);
+  
+  // 按钮变灰（已选）
+  btn.disabled = true;
+  btn.classList.add('used');
+  
+  // 更新答案区显示
+  updateSortAnswerArea(q);
+}
+
+function updateSortAnswerArea(q) {
+  const answerArea = document.getElementById('sort-answer-area');
+  if (!answerArea) return;
+  
+  if (state.userSortAnswer.length === 0) {
+    answerArea.innerHTML = '<div class="sort-answer-placeholder">答案区（点击上方片段按正确顺序添加）</div>';
+    return;
+  }
+  
+  let html = '<div class="sort-answer-list">';
+  state.userSortAnswer.forEach((fragIdx, order) => {
+    const frag = q.fragments[fragIdx];
+    html += `<div class="sort-answer-item" onclick="removeSortFragment(${order}, ${fragIdx}, q)">
+      <span class="sort-order">${order + 1}</span>
+      <span class="sort-frag-text">${frag}</span>
+      <span class="sort-remove">✕</span>
+    </div>`;
+  });
+  html += '</div>';
+  answerArea.innerHTML = html;
+}
+
+function removeSortFragment(order, fragIdx, q) {
+  if (state.answered) return;
+  
+  // 从用户答案中移除
+  state.userSortAnswer.splice(order, 1);
+  
+  // 恢复按钮
+  const fragmentBtns = document.querySelectorAll('.sort-frag-btn');
+  fragmentBtns.forEach(btn => {
+    if (parseInt(btn.dataset.index) === fragIdx) {
+      btn.disabled = false;
+      btn.classList.remove('used');
+    }
+  });
+  
+  // 更新答案区
+  updateSortAnswerArea(q);
+}
+
+function resetSortAnswer(q) {
+  if (state.answered) return;
+  
+  state.userSortAnswer = [];
+  
+  // 恢复所有按钮
+  const fragmentBtns = document.querySelectorAll('.sort-frag-btn');
+  fragmentBtns.forEach(btn => {
+    btn.disabled = false;
+    btn.classList.remove('used');
+  });
+  
+  // 清空答案区
+  updateSortAnswerArea(q);
+}
+
+function submitSortAnswer(q) {
+  if (state.answered) return;
+  if (state.userSortAnswer.length !== q.fragments.length) {
+    alert('请先将所有代码片段按正确顺序排列！');
+    return;
+  }
+  
+  state.answered = true;
+  clearInterval(state.timer);
+  
+  // 检查答案
+  const isCorrect = JSON.stringify(state.userSortAnswer) === JSON.stringify(q.answer);
+  
+  // 禁用所有按钮
+  document.querySelectorAll('.sort-frag-btn').forEach(btn => btn.disabled = true);
+  document.querySelectorAll('.sort-answer-item').forEach(item => {
+    item.onclick = null;
+    item.style.cursor = 'default';
+  });
+  
+  if (isCorrect) {
+    state.correct++;
+    state.score += GAME_CONFIG.scorePerCorrect + Math.floor((state.timeLeft / GAME_CONFIG.timePerQuestion) * GAME_CONFIG.scoreBonus);
+  }
+  
+  document.getElementById('game-score-val').textContent = state.score;
+  
+  // 显示反馈
+  const fb = document.getElementById('feedback-container');
+  const correctOrder = q.answer.map(i => `${i + 1}. ${q.fragments[i]}`).join('<br>');
+  
+  fb.innerHTML = `
+    <div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
+      ${isCorrect ? '✓ 排列正确！' : '✗ 排列错误。'}
+      <br><br>正确顺序：<br>${correctOrder}
+      ${q.explanation ? `<br><br>解析：${q.explanation}` : ''}
+    </div>
+    <button class="next-btn" onclick="nextQuestion()">
+      ${state.currentQIndex + 1 < state.questions.length ? '下一题 →' : '查看成绩 →'}
+    </button>
+  `;
 }
 
 // 初始化
