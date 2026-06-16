@@ -241,18 +241,63 @@ function showQuestion() {
     // 按钮区
     const btnArea = document.createElement('div');
     btnArea.className = 'sort-btn-area';
-    
+
     const resetBtn = document.createElement('button');
     resetBtn.className = 'confirm-btn';
     resetBtn.textContent = '重置排序';
-    resetBtn.onclick = () => window.resetSortAnswer();
+    resetBtn.onclick = () => {
+      if (state.answered) return;
+      state.userSortAnswer = [];
+      document.querySelectorAll('.sort-frag-btn').forEach(b => {
+        b.disabled = false;
+        b.classList.remove('used');
+      });
+      updateSortAnswerArea();
+    };
     resetBtn.style.marginRight = '10px';
     btnArea.appendChild(resetBtn);
 
     const confirmBtn = document.createElement('button');
     confirmBtn.className = 'confirm-btn';
     confirmBtn.textContent = '确认答案';
-    confirmBtn.onclick = () => window.submitSortAnswer();
+    confirmBtn.onclick = () => {
+      if (state.answered) return;
+      if (state.userSortAnswer.length !== q.fragments.length) {
+        alert('请先将所有代码片段按正确顺序排列！');
+        return;
+      }
+      state.answered = true;
+      clearInterval(state.timer);
+
+      const isCorrect = JSON.stringify(state.userSortAnswer) === JSON.stringify(q.answer);
+      if (isCorrect) {
+        state.correct++;
+        const bonus = Math.floor((state.timeLeft / GAME_CONFIG.timePerQuestion) * GAME_CONFIG.scoreBonus);
+        state.score += GAME_CONFIG.scorePerCorrect + bonus;
+      }
+
+      document.getElementById('game-score-val').textContent = state.score;
+
+      // 禁用交互
+      document.querySelectorAll('.sort-frag-btn').forEach(b => b.disabled = true);
+      document.querySelectorAll('.sort-answer-item').forEach(item => { item.style.cursor = 'default'; });
+
+      const correctOrder = q.answer.map(i => `${i + 1}. ${q.fragments[i]}`).join('<br>');
+      const isLast = state.currentQIndex + 1 >= state.questions.length;
+      const fb = document.getElementById('feedback-container');
+      fb.innerHTML = `
+        <div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
+          ${isCorrect ? '✓ 排列正确！' : '✗ 排列错误。'}
+          <br><br>正确顺序：<br>${correctOrder}
+          ${q.explanation ? `<br><br>解析：${q.explanation}` : ''}
+        </div>
+      `;
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'next-btn';
+      nextBtn.textContent = isLast ? '查看成绩 →' : '下一题 →';
+      nextBtn.addEventListener('click', nextQuestion);
+      fb.appendChild(nextBtn);
+    };
     btnArea.appendChild(confirmBtn);
     
     sortArea.appendChild(btnArea);
@@ -675,11 +720,3 @@ window.retryLevel = retryLevel;
 window.startLevel = startLevel;
 window.showChapterLevels = showChapterLevels;
 window.showScreen = showScreen;
-window.submitSortAnswer = function() {
-  const q = state.questions[state.currentQIndex];
-  submitSortAnswer(q);
-};
-window.resetSortAnswer = function() {
-  const q = state.questions[state.currentQIndex];
-  resetSortAnswer(q);
-};
