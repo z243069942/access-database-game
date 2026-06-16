@@ -1,5 +1,12 @@
 // 游戏核心逻辑
 
+// 游戏配置
+const GAME_CONFIG = {
+  timePerQuestion: 60,   // 每题时间(秒)
+  scorePerCorrect: 100,   // 答对基础分
+  scoreBonus: 50           // 时间奖励最高分
+};
+
 // 游戏状态
 const state = {
   currentChapter: 0,
@@ -342,16 +349,21 @@ function handleResult(isCorrect, q, userAns) {
     ? (q.answer ? '正确 (√)' : '错误 (×)')
     : (q.type === 'fill' ? q.answer : `${String.fromCharCode(65 + q.answer)}. ${q.options[q.answer]}`);
 
+  const isLast = state.currentQIndex + 1 >= state.questions.length;
   fb.innerHTML = `
     <div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
       ${isCorrect ? '✓ 回答正确！' : `✗ 答错了。正确答案：<strong>${answerText}</strong>`}
       ${q.explanation ? `<br><br>解析：${q.explanation}` : ''}
       ${(!isCorrect && q.type === 'fill' && userAns) ? `<br>你的答案：${userAns}` : ''}
     </div>
-    <button class="next-btn" onclick="nextQuestion()">
-      ${state.currentQIndex + 1 < state.questions.length ? '下一题 →' : '查看成绩 →'}
-    </button>
   `;
+
+  // 创建下一题按钮并用 addEventListener 绑定
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'next-btn';
+  nextBtn.textContent = isLast ? '查看成绩 →' : '下一题 →';
+  nextBtn.addEventListener('click', nextQuestion);
+  fb.appendChild(nextBtn);
 }
 
 function nextQuestion() {
@@ -394,15 +406,21 @@ function resetTimer() {
         const answerText = q.type === 'judge'
           ? (q.answer ? '正确 (√)' : '错误 (×)')
           : (q.type === 'fill' ? q.answer : `${String.fromCharCode(65 + q.answer)}. ${q.options[q.answer]}`);
+
+        const isLast = state.currentQIndex + 1 >= state.questions.length;
         fb.innerHTML = `
           <div class="feedback-box wrong-fb">
             ⏰ 超时！正确答案：<strong>${answerText}</strong>
             ${q.explanation ? `<br><br>解析：${q.explanation}` : ''}
           </div>
-          <button class="next-btn" onclick="nextQuestion()">
-            ${state.currentQIndex + 1 < state.questions.length ? '下一题 →' : '查看成绩 →'}
-          </button>
         `;
+
+        // 创建下一题按钮并用 addEventListener 绑定
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'next-btn';
+        nextBtn.textContent = isLast ? '查看成绩 →' : '下一题 →';
+        nextBtn.addEventListener('click', nextQuestion);
+        fb.appendChild(nextBtn);
       }
     }
   }, 1000);
@@ -524,22 +542,23 @@ function selectSortFragment(idx, btn, q) {
   btn.classList.add('used');
   
   // 更新答案区显示
-  updateSortAnswerArea(q);
+  updateSortAnswerArea();
 }
 
-function updateSortAnswerArea(q) {
+function updateSortAnswerArea() {
+  const q = state.questions[state.currentQIndex];
   const answerArea = document.getElementById('sort-answer-area');
   if (!answerArea) return;
-  
+
   if (state.userSortAnswer.length === 0) {
     answerArea.innerHTML = '<div class="sort-answer-placeholder">答案区（点击上方片段按正确顺序添加）</div>';
     return;
   }
-  
+
   let html = '<div class="sort-answer-list">';
   state.userSortAnswer.forEach((fragIdx, order) => {
     const frag = q.fragments[fragIdx];
-    html += `<div class="sort-answer-item" onclick="removeSortFragment(${order}, ${fragIdx}, q)">
+    html += `<div class="sort-answer-item" data-order="${order}" data-frag-idx="${fragIdx}">
       <span class="sort-order">${order + 1}</span>
       <span class="sort-frag-text">${frag}</span>
       <span class="sort-remove">✕</span>
@@ -547,14 +566,23 @@ function updateSortAnswerArea(q) {
   });
   html += '</div>';
   answerArea.innerHTML = html;
+
+  // 用闭包绑定点击事件
+  answerArea.querySelectorAll('.sort-answer-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const order = parseInt(item.dataset.order);
+      const fragIdx = parseInt(item.dataset.fragIdx);
+      removeSortFragment(order, fragIdx);
+    });
+  });
 }
 
-function removeSortFragment(order, fragIdx, q) {
+function removeSortFragment(order, fragIdx) {
   if (state.answered) return;
-  
+
   // 从用户答案中移除
   state.userSortAnswer.splice(order, 1);
-  
+
   // 恢复按钮
   const fragmentBtns = document.querySelectorAll('.sort-frag-btn');
   fragmentBtns.forEach(btn => {
@@ -563,9 +591,9 @@ function removeSortFragment(order, fragIdx, q) {
       btn.classList.remove('used');
     }
   });
-  
+
   // 更新答案区
-  updateSortAnswerArea(q);
+  updateSortAnswerArea();
 }
 
 function resetSortAnswer(q) {
@@ -581,7 +609,7 @@ function resetSortAnswer(q) {
   });
   
   // 清空答案区
-  updateSortAnswerArea(q);
+  updateSortAnswerArea();
 }
 
 function submitSortAnswer(q) {
@@ -614,17 +642,22 @@ function submitSortAnswer(q) {
   // 显示反馈
   const fb = document.getElementById('feedback-container');
   const correctOrder = q.answer.map(i => `${i + 1}. ${q.fragments[i]}`).join('<br>');
-  
+
+  const isLast = state.currentQIndex + 1 >= state.questions.length;
   fb.innerHTML = `
     <div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
       ${isCorrect ? '✓ 排列正确！' : '✗ 排列错误。'}
       <br><br>正确顺序：<br>${correctOrder}
       ${q.explanation ? `<br><br>解析：${q.explanation}` : ''}
     </div>
-    <button class="next-btn" onclick="nextQuestion()">
-      ${state.currentQIndex + 1 < state.questions.length ? '下一题 →' : '查看成绩 →'}
-    </button>
   `;
+
+  // 创建下一题按钮并用 addEventListener 绑定
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'next-btn';
+  nextBtn.textContent = isLast ? '查看成绩 →' : '下一题 →';
+  nextBtn.addEventListener('click', nextQuestion);
+  fb.appendChild(nextBtn);
 }
 
 // 初始化
@@ -633,3 +666,18 @@ document.addEventListener('DOMContentLoaded', () => {
   updateHomeStats();
   showScreen('home-screen');
 });
+
+// 将关键函数暴露到全局，供HTML内联事件和动态创建的元素使用
+window.nextQuestion = nextQuestion;
+window.retryLevel = retryLevel;
+window.startLevel = startLevel;
+window.showChapterLevels = showChapterLevels;
+window.showScreen = showScreen;
+window.submitSortAnswer = function() {
+  const q = state.questions[state.currentQIndex];
+  submitSortAnswer(q);
+};
+window.resetSortAnswer = function() {
+  const q = state.questions[state.currentQIndex];
+  resetSortAnswer(q);
+};
