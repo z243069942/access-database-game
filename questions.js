@@ -1,0 +1,269 @@
+// Access数据库题库 - 河南对口招生备考专用
+// 章节：0=数据库基础, 1=表操作, 2=查询设计, 3=SQL语言, 4=窗体设计, 5=报表与其他
+
+const CHAPTERS = [
+  {
+    id:0, name:"数据库基础", icon:"🗄️",
+    desc:"基本概念·数据模型·关系理论",
+    color:"#e94560",
+    levels:[
+      {id:"0-0",name:"数据库基本概念",desc:"数据库、DBMS、数据模型",qs:10},
+      {id:"0-1",name:"关系数据库理论",desc:"关系模型、键、完整性约束",qs:10},
+      {id:"0-2",name:"Access界面认识",desc:"Access对象、启动操作",qs:8}
+    ]
+  },
+  {
+    id:1, name:"表的操作", icon:"📋",
+    desc:"创建表·字段设置·数据类型",
+    color:"#0f6e56",
+    levels:[
+      {id:"1-0",name:"字段数据类型",desc:"各种数据类型及使用场景",qs:10},
+      {id:"1-1",name:"主键与索引",desc:"主键设置、索引类型、关系",qs:10},
+      {id:"1-2",name:"表的关系与约束",desc:"一对一、一对多、参照完整性",qs:8}
+    ]
+  },
+  {
+    id:2, name:"查询设计", icon:"🔍",
+    desc:"选择查询·操作查询·条件表达式",
+    color:"#185fa5",
+    levels:[
+      {id:"2-0",name:"选择查询基础",desc:"查询类型、条件设置、字段",qs:10},
+      {id:"2-1",name:"查询条件表达式",desc:"运算符、通配符、函数",qs:10},
+      {id:"2-2",name:"操作查询与统计",desc:"追加、更新、删除、汇总",qs:10}
+    ]
+  },
+  {
+    id:3, name:"SQL语言", icon:"💻",
+    desc:"SELECT·INSERT·UPDATE·DELETE",
+    color:"#854f0b",
+    levels:[
+      {id:"3-0",name:"SELECT查询基础",desc:"SELECT语法、WHERE条件",qs:10},
+      {id:"3-1",name:"聚合函数与分组",desc:"COUNT、SUM、GROUP BY",qs:10},
+      {id:"3-2",name:"数据操作语句",desc:"INSERT、UPDATE、DELETE语法",qs:10}
+    ]
+  },
+  {
+    id:4, name:"窗体设计", icon:"🖼️",
+    desc:"控件·属性·窗体类型",
+    color:"#533ab7",
+    levels:[
+      {id:"4-0",name:"窗体基础",desc:"窗体类型、结构、创建方式",qs:10},
+      {id:"4-1",name:"常用控件",desc:"文本框、组合框、命令按钮等",qs:10}
+    ]
+  },
+  {
+    id:5, name:"报表与宏", icon:"📊",
+    desc:"报表设计·宏操作·数据导出",
+    color:"#993556",
+    levels:[
+      {id:"5-0",name:"报表设计",desc:"报表类型、分组统计、打印",qs:10},
+      {id:"5-1",name:"宏与综合应用",desc:"宏的定义、常用操作",qs:8}
+    ]
+  }
+];
+
+// 完整题库
+const QUESTION_BANK = {
+  "0-0": [
+    {type:"single",text:"在数据库管理系统（DBMS）中，数据库（DB）、数据库管理系统（DBMS）、数据库系统（DBS）三者之间的关系是：",options:["DB包含DBMS和DBS","DBS包含DB和DBMS","DBMS包含DB和DBS","三者是并列关系"],answer:1,explanation:"数据库系统（DBS）是最大的概念，它包含数据库（DB）、数据库管理系统（DBMS）以及相关的硬件、软件和人员。"},
+    {type:"single",text:"Access数据库属于哪种数据库类型？",options:["层次型数据库","网状型数据库","关系型数据库","面向对象数据库"],answer:2,explanation:"Access是微软公司开发的关系型数据库管理系统，数据以二维表格形式存储。"},
+    {type:"single",text:"在关系模型中，一个关系对应的是：",options:["一个字段","一条记录","一张二维表","一个数据库文件"],answer:2,explanation:"在关系数据库中，'关系'就是一张二维表，每行是一条记录（元组），每列是一个属性（字段）。"},
+    {type:"single",text:"下列关于数据库特点的说法，不正确的是：",options:["数据可以共享","数据独立性高","数据冗余度高","减少数据不一致性"],answer:2,explanation:"数据库的特点之一是减少数据冗余，而不是数据冗余度高。数据冗余高是文件系统管理数据的缺点。"},
+    {type:"single",text:"数据的最小存储单位是：",options:["记录","字段","表","数据库"],answer:1,explanation:"字段（Field）是数据库中数据存储的最小单位，表示实体的一个属性。"},
+    {type:"judge",text:"Access 2010是一个独立运行的数据库管理系统，不属于Office套件。",answer:false,explanation:"Access是Microsoft Office套件的组成部分之一，与Word、Excel等共同构成Office办公软件包。"},
+    {type:"judge",text:"数据库中的数据是有结构的，而不是杂乱无序的数据集合。",answer:true,explanation:"数据库中的数据按照一定的数据模型进行组织，具有结构化特点，便于管理和检索。"},
+    {type:"single",text:"在关系数据库中，用来表示实体间关系的是：",options:["字段","记录","表","关系图"],answer:2,explanation:"在关系数据库中，实体间的关系通过表（关系）来表示，两个表之间通过公共字段建立联系。"},
+    {type:"fill",text:"数据库管理系统的英文缩写是_______。",answer:"DBMS",explanation:"DBMS是Database Management System的缩写，是管理数据库的软件系统。"},
+    {type:"single",text:"Access数据库文件的扩展名是：",options:[".mdb 或 .accdb",".xls",".doc",".dat"],answer:0,explanation:"Access 2003及之前版本使用.mdb，Access 2007及以后版本默认使用.accdb格式。"}
+  ],
+  "0-1": [
+    {type:"single",text:"在关系数据库中，能唯一标识一条记录的字段或字段组合称为：",options:["外键","候选键","主键","超键"],answer:2,explanation:"主键（Primary Key）是用来唯一标识表中每一条记录的字段或字段组合，不允许重复和为空。"},
+    {type:"single",text:"关系的完整性约束包括：",options:["实体完整性、域完整性、参照完整性","实体完整性、参照完整性、用户自定义完整性","实体完整性、关系完整性、参照完整性","域完整性、关系完整性、用户定义完整性"],answer:1,explanation:"关系完整性包括三类：实体完整性（主键不空）、参照完整性（外键约束）、用户自定义完整性（业务规则）。"},
+    {type:"single",text:"在关系模型中，实体完整性要求：",options:["外键值不能为空","主键值不能重复或为空","所有字段都不能为空","属性值必须在规定范围内"],answer:1,explanation:"实体完整性规定主键的值不能为NULL，也不能重复，以保证每条记录的唯一性。"},
+    {type:"judge",text:"在关系数据库中，外键可以是另一个表的主键，也可以是本表的主键。",answer:true,explanation:"外键引用的是另一个表（或本表）的主键，用于建立表间的关联关系，实现参照完整性。"},
+    {type:"single",text:"下列说法正确的是：",options:["一个表只能有一个候选键","一个表可以有多个主键","候选键的值可以重复","一个表可以有多个候选键但只能指定一个作为主键"],answer:3,explanation:"一个表可能有多个候选键（都能唯一标识记录），但只能指定其中一个作为主键。"},
+    {type:"fill",text:"在关系数据库中，引用其他表主键的字段称为_______。",answer:"外键",explanation:"外键（Foreign Key）是一个表中引用另一个表主键的字段，用于建立两个表之间的关系。"},
+    {type:"single",text:"关系模型中，一张表的行数称为：",options:["关系的度","关系的基数","关系的域","关系的属性"],answer:1,explanation:"关系的基数（Cardinality）指表中的行数（记录数），而关系的度（Degree）指表中的列数（字段数）。"},
+    {type:"judge",text:"关系数据库中，参照完整性要求外键的值必须是另一个表主键中已存在的值或为空值NULL。",answer:true,explanation:"参照完整性约束：外键的值要么等于被引用表中某个主键值，要么为NULL（如果允许的话）。"},
+    {type:"single",text:"在E-R图中，矩形框表示：",options:["属性","联系","实体","关键字"],answer:2,explanation:"在E-R图（实体-联系图）中，矩形框表示实体，椭圆表示属性，菱形表示联系。"},
+    {type:"single",text:"下列关于关系数据库规范化的说法，正确的是：",options:["规范化程度越高越好","第三范式必须满足第二范式","满足第二范式的一定满足第三范式","规范化会增加数据冗余"],answer:1,explanation:"范式有层次关系：1NF→2NF→3NF，高范式包含低范式的要求，即满足3NF必先满足2NF。"}
+  ],
+  "0-2": [
+    {type:"single",text:"Access数据库中包含的七种对象不包括：",options:["表","查询","窗体","程序"],answer:3,explanation:"Access的七大对象是：表、查询、窗体、报表、宏、模块、页（数据访问页），没有'程序'对象。"},
+    {type:"single",text:"在Access中，存储数据的基本对象是：",options:["窗体","查询","表","报表"],answer:2,explanation:"表是Access中存储数据的基本对象，其他对象（查询、窗体、报表等）都是基于表的数据进行操作。"},
+    {type:"judge",text:"在Access中，打开数据库后可以直接看到数据库中所有对象。",answer:true,explanation:"在Access的导航窗格中，可以查看并访问数据库中的所有对象（表、查询、窗体、报表等）。"},
+    {type:"single",text:"Access数据库文件在2007版本后默认使用的扩展名为：",options:[".mdb",".accdb",".xls",".db"],answer:1,explanation:"Access 2007及以后版本（2010、2013、2016等）默认使用.accdb格式，旧版本使用.mdb格式。"},
+    {type:"fill",text:"Access中，用于与用户交互、输入和显示数据的对象称为_______。",answer:"窗体",explanation:"窗体（Form）是Access中用于用户交互的对象，提供友好的数据输入和显示界面。"},
+    {type:"single",text:"在Access中，可以对数据库中的数据进行打印输出的对象是：",options:["表","查询","窗体","报表"],answer:3,explanation:"报表（Report）是Access中专门用于数据格式化和打印输出的对象，可以按指定格式打印数据。"},
+    {type:"single",text:"Access中的宏对象主要用于：",options:["存储数据","查询数据","自动化操作","显示数据"],answer:2,explanation:"宏是一组自动化操作命令的集合，用于自动执行重复性任务，提高工作效率。"},
+    {type:"judge",text:"在Access中，模块是使用VBA（Visual Basic for Applications）语言编写的程序代码。",answer:true,explanation:"模块是Access中使用VBA语言编写的代码集合，可以实现比宏更复杂的自动化功能。"}
+  ],
+  "1-0": [
+    {type:"single",text:"在Access中，用于存储整数的数据类型是：",options:["文本型","数字型","是/否型","日期/时间型"],answer:1,explanation:"数字型（Number）用于存储数值数据，包括整数和小数，适合进行数学计算。"},
+    {type:"single",text:"Access中，'是/否'数据类型占用的存储空间为：",options:["1字节","2字节","1位","4字节"],answer:2,explanation:"是/否型（Boolean）只存储两个值（True/False），只需1位（bit）存储空间，非常节省。"},
+    {type:"single",text:"在Access中，存储图片、声音等多媒体数据应使用：",options:["文本","备注","OLE对象","超链接"],answer:2,explanation:"OLE对象数据类型用于存储图片、声音、视频等多媒体数据，或其他应用程序创建的对象。"},
+    {type:"single",text:"Access文本型字段默认最多可以存储多少个字符？",options:["50个","100个","255个","1024个"],answer:2,explanation:"Access中文本型（Text）字段最多可存储255个字符，默认大小通常设为50。超过255字符需用备注型。"},
+    {type:"judge",text:"在Access中，货币型数据类型的精度是4位小数。",answer:true,explanation:"货币型（Currency）精度为小数点后4位，用于金融计算，能避免舍入误差。"},
+    {type:"single",text:"下列哪种数据类型适合存储学生的学号（如：20230101）？",options:["数字型","文本型","自动编号","日期/时间型"],answer:1,explanation:"学号虽然看起来是数字，但不需要进行数学运算，且可能有前导零，应使用文本型存储。"},
+    {type:"single",text:"Access中'自动编号'数据类型的特点是：",options:["用户手动输入，自动格式化","每次新增记录时自动递增","存储日期时间","存储是或否"],answer:1,explanation:"自动编号（AutoNumber）每次新增记录时自动生成一个唯一的递增数字，常用作主键。"},
+    {type:"fill",text:"在Access中，用于存储超过255个字符的长文本数据，应使用_______数据类型。",answer:"备注",explanation:"备注型（Memo）可以存储最多约65536个字符的长文本，适合存储描述性的长段文字。"},
+    {type:"single",text:"在Access中，'超链接'数据类型主要用于存储：",options:["数字链接","网址或文件路径","图片文件","声音文件"],answer:1,explanation:"超链接型用于存储网址（URL）或文件路径，点击时可以打开相应的网页或文件。"},
+    {type:"judge",text:"在Access中，对于参与数学计算的字段，应选择文本型数据类型。",answer:false,explanation:"需要参与数学计算的字段应选择数字型或货币型，文本型不能直接进行数学计算。"}
+  ],
+  "1-1": [
+    {type:"single",text:"在Access中，设置主键的目的是：",options:["提高查询速度","唯一标识每条记录","限制字段的数据类型","设置字段默认值"],answer:1,explanation:"主键的主要作用是唯一标识表中的每一条记录，保证记录的唯一性，同时Access会自动为主键创建索引。"},
+    {type:"single",text:"Access中，主键字段的值：",options:["可以为空","可以重复","不能为空也不能重复","可以重复但不能为空"],answer:2,explanation:"主键要求：值不能为NULL（空），也不能重复，每条记录的主键值必须是唯一的。"},
+    {type:"judge",text:"一个Access表可以设置多个字段共同构成主键（复合主键）。",answer:true,explanation:"当单个字段不能唯一标识记录时，可以选择多个字段共同组成复合主键（联合主键）。"},
+    {type:"single",text:"在Access中，建立索引的主要目的是：",options:["减少数据冗余","加快数据查询速度","保证数据完整性","减少存储空间"],answer:1,explanation:"索引通过额外的数据结构加速数据检索，就像书的目录一样，能大幅提高查询速度。"},
+    {type:"single",text:"在Access表设计视图中，设置'索引'属性为'有（有重复）'表示：",options:["创建唯一索引","创建允许重复值的普通索引","不创建索引","创建主键索引"],answer:1,explanation:"'有（有重复）'表示创建普通索引，索引字段的值允许重复；'有（无重复）'表示创建唯一索引。"},
+    {type:"fill",text:"在Access中，将两个表通过相关字段联系起来的操作称为建立表间_______。",answer:"关系",explanation:"通过建立表间关系（Relationship），可以将不同表中的相关数据联系起来，实现多表查询。"},
+    {type:"single",text:"在Access中，设置参照完整性后，以下操作会被阻止的是：",options:["在主表中修改非主键字段","在从表中添加在主表中不存在的外键值","在主表中添加新记录","在从表中修改非外键字段"],answer:1,explanation:"启用参照完整性后，不能在从表中输入主表中不存在的外键值，保证数据一致性。"},
+    {type:"single",text:"在Access关系中，'一对多'关系表示：",options:["两个表互相引用对方","主表的一条记录对应从表的多条记录","两个表的记录数相同","从表的一条记录对应主表的多条记录"],answer:1,explanation:"一对多（1:N）是最常见的关系类型：主表中一条记录可以对应从表中多条相关记录。"},
+    {type:"judge",text:"在Access中，建立关系时，主表的关联字段必须是主键或有唯一索引。",answer:true,explanation:"要建立关系，主表（一方）的关联字段必须是主键或设置了唯一索引，从表（多方）的字段是外键。"},
+    {type:"single",text:"Access中，'级联更新相关字段'的含义是：",options:["更新从表记录时主表自动更新","更新主表主键时从表外键值自动更新","删除记录时自动更新","添加记录时自动检查"],answer:1,explanation:"'级联更新'：修改主表主键值时，所有从表中对应的外键值自动同步更新，保持数据一致性。"}
+  ],
+  "1-2": [
+    {type:"single",text:"在Access中，两个表之间建立关系后，在'关系'窗口中关系线上显示的'1'和'∞'符号分别表示：",options:["主键和外键","'一'方和'多'方","唯一索引和普通索引","主表和从表"],answer:1,explanation:"关系线上的'1'表示关系的'一'方（主表），'∞'表示关系的'多'方（从表），共同说明是一对多关系。"},
+    {type:"judge",text:"在Access中，设置'级联删除相关记录'后，删除主表中的记录时，从表中对应记录也会自动删除。",answer:true,explanation:"'级联删除'：删除主表记录时，从表中所有与之关联的记录会自动被同步删除。"},
+    {type:"single",text:"下列关于Access表属性的说法正确的是：",options:["'必填字段'设为'是'表示该字段可以为空","'输入掩码'用于格式化数据输入","'有效性规则'用于设置字段默认值","'默认值'不允许用户修改"],answer:1,explanation:"输入掩码（Input Mask）定义数据输入格式，如电话号码格式(999)000-0000，引导用户规范输入。"},
+    {type:"fill",text:"在Access字段属性中，'有效性规则'用于设置字段值必须满足的_______条件。",answer:"验证",explanation:"有效性规则（Validation Rule）是对字段值的约束条件，只有满足条件的值才能被保存。"},
+    {type:"single",text:"在Access表设计中，设置某字段的'默认值'属性的作用是：",options:["限制字段的输入范围","新增记录时自动填入该值","该字段不允许修改","设置字段格式"],answer:1,explanation:"默认值（Default Value）：新建记录时，如果用户没有输入该字段的值，系统自动填入预设的默认值。"},
+    {type:"single",text:"Access中，字段的'标题'属性用于：",options:["存储数据的实际内容","在界面上显示替代字段名的友好名称","设置字段的数据类型","定义字段的大小"],answer:1,explanation:"标题（Caption）属性设置字段在窗体、报表或数据表视图中显示的标签文字，不影响字段名本身。"},
+    {type:"judge",text:"Access中，一个字段只能在一个索引中使用。",answer:false,explanation:"一个字段可以参与多个索引，同时一个复合索引也可以包含多个字段。"},
+    {type:"single",text:"在Access中，'参照完整性'约束的是：",options:["主键字段的唯一性","字段值的有效范围","外键与主键之间的一致性","记录的完整性"],answer:2,explanation:"参照完整性约束外键与被引用表主键之间的关系，确保从表中的外键值在主表主键中存在。"}
+  ],
+  "2-0": [
+    {type:"single",text:"Access中，从一个或多个表中检索满足条件的数据，应使用：",options:["追加查询","更新查询","选择查询","删除查询"],answer:2,explanation:"选择查询（Select Query）是最常用的查询类型，用于从表中检索、筛选和显示满足条件的记录。"},
+    {type:"single",text:"在Access查询设计视图中，'条件'行用于：",options:["设置查询结果的排序方式","设置字段的显示格式","设置筛选记录的条件","设置字段别名"],answer:2,explanation:"在查询设计视图的'条件'行中输入筛选条件，只有满足条件的记录才会出现在查询结果中。"},
+    {type:"judge",text:"在Access查询中，同一字段的不同条件写在同一行的'条件'中，表示这些条件之间是AND关系。",answer:true,explanation:"同一行的多个条件之间是AND（与）关系，所有条件都满足才显示该记录；不同行之间是OR（或）关系。"},
+    {type:"single",text:"查询中，如果要显示所有姓'张'的学生，在姓名字段条件行应输入：",options:['="张"','Like "张*"','="张*"','Like "张"'],answer:1,explanation:'使用Like运算符配合通配符：Like "张*" 表示以"张"开头的任意字符串。*是通配符，代表零个或多个字符。'},
+    {type:"fill",text:"在Access查询中，表示'大于等于'的运算符是_______。",answer:">=",explanation:"比较运算符：>（大于）、>=（大于等于）、<（小于）、<=（小于等于）、=（等于）、<>（不等于）。"},
+    {type:"single",text:"在Access查询的条件中，要表示80到100之间（包含两端），可以使用：",options:[">=80 And <=100","80<=x<=100","Between 80 And 100","A或C都可以"],answer:3,explanation:"两种写法均正确：①>=80 And <=100 ②Between 80 And 100，效果相同，都包含边界值80和100。"},
+    {type:"single",text:"下列关于Access查询的说法，不正确的是：",options:["查询可以基于多个表","查询结果可以作为另一个查询的数据源","查询会永久保存检索出的数据","查询可以包含计算字段"],answer:2,explanation:"查询本身不存储数据，只保存查询定义。每次运行查询时从原始表中提取数据，结果是动态的。"},
+    {type:"single",text:"在Access查询中，要显示'成绩'字段的前10名学生，应使用：",options:["添加排序后设置返回记录数","使用删除查询","使用追加查询","使用更新查询"],answer:0,explanation:"设置'成绩'字段降序排列，然后在查询属性中设置'返回'（Top Values）为10，即可显示前10名。"},
+    {type:"judge",text:"在Access中，交叉表查询可以将一个字段的多个值作为列标题显示。",answer:true,explanation:"交叉表查询（Crosstab Query）将字段值转换为列标题，以紧凑的格式显示汇总数据，类似Excel数据透视表。"},
+    {type:"single",text:"在Access查询中，设置字段的别名（显示标题）的语法是：",options:["字段名 AS 别名","别名：字段名","字段名=别名","[别名]字段名"],answer:1,explanation:"在查询设计视图中，在字段名前加'别名:'的方式设置别名，如'总分:成绩'，结果列标题显示为'总分'。"}
+  ],
+  "2-1": [
+    {type:"single",text:"在Access查询条件中，通配符'?'表示：",options:["任意多个字符","任意一个字符","数字字符","非字母字符"],answer:1,explanation:"在Access中，通配符'?'（问号）匹配任意一个字符，'*'（星号）匹配任意多个字符。"},
+    {type:"fill",text:"在Access中，要查找所有包含'数据'两字的记录，Like条件应写为：Like _______。",answer:'"*数据*"',explanation:'Like "*数据*"：前后都有*通配符，表示字段值中任意位置包含"数据"二字。'},
+    {type:"single",text:"在Access查询条件中，'Is Null'的含义是：",options:["字段值等于0","字段值为空字符串","字段值为NULL（未填写）","字段值为假"],answer:2,explanation:"Is Null用于检测字段值是否为NULL（即未填写任何值），Is Not Null表示字段有值。注意NULL≠空字符串。"},
+    {type:"single",text:"在Access中，Date()函数的作用是：",options:["返回系统当前日期","返回日期字段的值","计算两个日期的差","格式化日期显示"],answer:0,explanation:"Date()函数返回系统当前日期（不含时间），Now()返回当前日期和时间，Time()返回当前时间。"},
+    {type:"judge",text:"在Access查询中，条件'Not Like \"王*\"'表示筛选姓名不以'王'开头的记录。",answer:true,explanation:"Not运算符取反：Not Like '王*' 表示姓名不以'王'字开头的所有记录。"},
+    {type:"single",text:"在Access中，要在查询中创建计算字段'平均成绩'（数学和语文成绩的平均），应在字段行输入：",options:["平均成绩:[数学]+[语文]/2","平均成绩=([数学]+[语文])/2","平均成绩:([数学]+[语文])/2","([数学]+[语文])/2 AS 平均成绩"],answer:2,explanation:"计算字段格式：别名:表达式。如'平均成绩:([数学]+[语文])/2'，字段名和表达式用':'分隔。"},
+    {type:"single",text:"Access中，Year()函数的作用是：",options:["返回当前年份","从日期中提取年份数字","格式化年份显示","计算年龄"],answer:1,explanation:"Year([字段名])从日期值中提取年份，如Year(#2023-09-01#)返回2023。类似的有Month()、Day()。"},
+    {type:"fill",text:"在Access查询中，要筛选'出生日期'在1990年到2000年之间的记录，条件应为：Between _______ And _______。",answer:"#1990-1-1# #2000-12-31#",explanation:"日期值需要用#号括起来。Between #1990-1-1# And #2000-12-31# 表示1990年到2000年的日期范围。"},
+    {type:"single",text:"在Access中，Len()函数的作用是：",options:["返回字段的最大长度","计算字符串的字符个数","检测字符串是否为空","截取字符串"],answer:1,explanation:"Len(字符串)返回字符串的字符数，如Len('Access')返回6。可用于筛选特定长度的字段值。"},
+    {type:"judge",text:"在Access查询中，字段条件行输入'In(\"北京\",\"上海\",\"广州\")'可以筛选城市是北京、上海或广州的记录。",answer:true,explanation:'In运算符用于判断值是否属于指定列表中，In("北京","上海","广州")等价于="北京" Or ="上海" Or ="广州"。'}
+  ],
+  "2-2": [
+    {type:"single",text:"Access中，将查询结果追加到另一个表的查询类型是：",options:["选择查询","删除查询","更新查询","追加查询"],answer:3,explanation:"追加查询（Append Query）将查询结果中的记录追加到指定表中，适用于数据迁移和批量添加。"},
+    {type:"single",text:"在Access中，批量修改表中满足条件记录的字段值，应使用：",options:["选择查询","更新查询","追加查询","生成表查询"],answer:1,explanation:"更新查询（Update Query）用于批量修改表中满足指定条件的记录的字段值，如给所有员工涨薪10%。"},
+    {type:"judge",text:"在Access中，操作查询（追加、更新、删除、生成表查询）执行后，数据的改变是不可撤销的。",answer:true,explanation:"操作查询直接修改表中的数据，一旦执行就会永久改变数据。建议执行前备份，或先用选择查询预览。"},
+    {type:"single",text:"在Access分组统计查询中，'总计'行中'Group By'的含义是：",options:["对该字段的值求和","按该字段的值进行分组","统计该字段的记录数","计算该字段的平均值"],answer:1,explanation:"在汇总查询中，'Group By'表示按该字段分组统计，Count、Sum等函数对每个分组分别计算。"},
+    {type:"single",text:"在Access查询中，Count(*)表示：",options:["统计某字段的合计","统计非空记录数","统计所有记录的总数","计算记录的平均值"],answer:2,explanation:"Count(*)统计查询结果中所有记录的总数（包含NULL值）；Count([字段名])只统计该字段非NULL的记录数。"},
+    {type:"fill",text:"在Access汇总查询中，对数字字段求最大值应使用_______函数。",answer:"Max",explanation:"常用聚合函数：Sum（求和）、Avg（平均值）、Count（计数）、Max（最大值）、Min（最小值）。"},
+    {type:"single",text:"生成表查询与选择查询的主要区别是：",options:["生成表查询不能有条件","生成表查询将结果保存为新表","生成表查询只能操作一个表","生成表查询不能使用聚合函数"],answer:1,explanation:"生成表查询（Make Table Query）将查询结果创建并保存为一个新的永久表，而选择查询只显示动态结果。"},
+    {type:"single",text:"在Access查询中，'Having'子句用于：",options:["筛选分组前的记录","筛选分组后的聚合结果","设置字段排序","定义计算字段"],answer:1,explanation:"Having子句对GROUP BY分组后的结果进行过滤，类似Where但用于聚合结果，如Having Count(*)>3。"},
+    {type:"judge",text:"在Access中，删除查询会将满足条件的记录从表中永久删除。",answer:true,explanation:"删除查询（Delete Query）会从表中永久删除满足条件的记录，操作不可撤销，执行前应谨慎确认。"},
+    {type:"single",text:"下列Access查询类型中，不会修改表中原始数据的是：",options:["更新查询","删除查询","追加查询","选择查询"],answer:3,explanation:"选择查询（Select Query）只读取和显示数据，不会修改原始表中的任何数据。其他三种都会改变数据。"}
+  ],
+  "3-0": [
+    {type:"single",text:"下列SQL语句中，用于从表中查询数据的关键字是：",options:["INSERT","UPDATE","SELECT","DELETE"],answer:2,explanation:"SELECT是SQL中最基本的查询命令，用于从一个或多个表中检索数据。"},
+    {type:"fill",text:"SQL中，SELECT查询的完整基本格式为：SELECT 字段列表 _______ 表名 WHERE 条件。",answer:"FROM",explanation:"SELECT语句基本格式：SELECT 字段 FROM 表名 WHERE 条件 ORDER BY 字段，FROM指定数据来源表。"},
+    {type:"single",text:"在SQL中，'SELECT * FROM 学生表'中的'*'表示：",options:["所有记录","所有字段","表中的第一条记录","只查询主键字段"],answer:1,explanation:"SELECT后的'*'（星号）是通配符，表示查询该表的所有字段（列），等同于列出所有字段名。"},
+    {type:"single",
+     text:"以下SQL语句的功能是什么？\nSELECT 姓名, 成绩 FROM 学生 WHERE 成绩>=60 ORDER BY 成绩 DESC",
+     code:"SELECT 姓名, 成绩\nFROM 学生\nWHERE 成绩 >= 60\nORDER BY 成绩 DESC",
+     options:["查询所有学生成绩并升序排列","查询成绩及格学生的姓名和成绩，按成绩降序排列","删除不及格学生的记录","统计及格学生人数"],answer:1,explanation:"WHERE 成绩>=60 筛选及格学生；ORDER BY 成绩 DESC 按成绩降序（从高到低）排列结果。"},
+    {type:"single",text:"在SQL的ORDER BY子句中，DESC表示：",options:["升序排列","降序排列","默认排列","随机排列"],answer:1,explanation:"ORDER BY 字段 DESC 表示按该字段降序排列（从大到小/从Z到A），ASC表示升序（默认）。"},
+    {type:"judge",text:"SQL语句中，WHERE子句用于对查询结果进行过滤，只返回满足条件的记录。",answer:true,explanation:"WHERE子句在查询时对记录进行过滤，只有满足WHERE条件的记录才会被包含在查询结果中。"},
+    {type:"single",text:"SQL中，用于去除查询结果中重复行的关键字是：",options:["UNIQUE","DISTINCT","DIFFERENT","NOTREPEAT"],answer:1,explanation:"SELECT DISTINCT 字段名 FROM 表名，DISTINCT关键字去除结果中的重复行，每个不同的值只显示一次。"},
+    {type:"fill",text:"SQL中，查询'学生'表中学生总人数，应使用：SELECT _______ FROM 学生",answer:"COUNT(*)",explanation:"COUNT(*)统计表中所有记录的数量，即总人数。如 SELECT COUNT(*) FROM 学生 返回学生总人数。"},
+    {type:"single",text:"在SQL中，连接两个表查询时，常用以下哪个关键字？",options:["CONNECT","JOIN","LINK","COMBINE"],answer:1,explanation:"JOIN（或INNER JOIN）用于连接两个表，通常配合ON子句指定连接条件，如 FROM A JOIN B ON A.id=B.id。"},
+    {type:"judge",text:"在Access的SQL视图中，可以直接编写和执行SQL语句。",answer:true,explanation:"在Access查询的SQL视图（View→SQL View）中，可以直接编写SQL语句，也可以查看查询设计视图生成的SQL代码。"}
+  ],
+  "3-1": [
+    {type:"single",text:"SQL中，'GROUP BY'的作用是：",options:["对结果排序","按指定字段分组统计","过滤记录","连接多个表"],answer:1,explanation:"GROUP BY子句将结果集按指定字段的值分组，配合聚合函数（SUM、COUNT等）对每组进行统计。"},
+    {type:"fill",text:"SQL中，计算'成绩'字段平均值的聚合函数写法为：_______ (成绩)",answer:"AVG",explanation:"AVG()函数计算数值字段的平均值，如 SELECT AVG(成绩) FROM 学生 计算所有学生的平均成绩。"},
+    {type:"single",
+     text:"下面SQL语句的作用是什么？",
+     code:"SELECT 班级, COUNT(*) AS 人数, AVG(成绩) AS 平均分\nFROM 学生\nGROUP BY 班级",
+     options:["查询所有学生的班级、人数和成绩","按班级统计各班的人数和平均成绩","查询班级人数最多的记录","删除重复的班级记录"],answer:1,explanation:"GROUP BY 班级 按班级分组，COUNT(*)统计每班人数，AVG(成绩)计算每班平均成绩。"},
+    {type:"single",text:"SQL中，HAVING子句与WHERE子句的区别是：",options:["HAVING用于分组后过滤，WHERE用于分组前过滤","两者完全相同可互换","HAVING只能用数字条件","WHERE只用于字符串字段"],answer:0,explanation:"WHERE在分组前过滤原始数据，HAVING在GROUP BY分组后过滤聚合结果。HAVING可使用聚合函数。"},
+    {type:"judge",text:"SQL中，COUNT(字段名)会统计包含NULL值的记录数。",answer:false,explanation:"COUNT(字段名)只统计该字段不为NULL的记录数；COUNT(*)才统计所有记录数（包括含NULL的行）。"},
+    {type:"single",text:"查询各科成绩最高分，SQL语句是：",options:["SELECT 科目, MAX(成绩) FROM 成绩表","SELECT 科目, MAX(成绩) FROM 成绩表 GROUP BY 科目","SELECT MAX(成绩) FROM 成绩表 GROUP BY 科目","SELECT 科目, SUM(成绩) FROM 成绩表 GROUP BY 科目"],answer:1,explanation:"需要GROUP BY 科目分组，再用MAX(成绩)求每科的最高分，结果显示科目名和对应最高分。"},
+    {type:"fill",text:"SQL中，统计表中某字段的最小值使用_______函数。",answer:"MIN",explanation:"MIN()返回字段的最小值，MAX()返回最大值，SUM()求和，AVG()求平均，COUNT()计数。"},
+    {type:"single",text:"以下SQL中，HAVING COUNT(*)>2的含义是：",options:["查询记录数大于2的字段","筛选分组后记录数超过2的组","查询第2条记录之后的数据","限制查询结果只显示2条"],answer:1,explanation:"HAVING COUNT(*)>2：在GROUP BY分组后，只保留该组记录数超过2条的分组。"},
+    {type:"judge",text:"SQL中，GROUP BY语句后可以跟多个字段，表示按这些字段的组合进行分组。",answer:true,explanation:"GROUP BY可以跟多个字段，如 GROUP BY 班级, 性别，表示按班级和性别的组合进行分组统计。"},
+    {type:"single",text:"下列SQL聚合函数中，可以用于非数值字段（如文本字段）的是：",options:["SUM","AVG","COUNT","MAX和MIN"],answer:3,explanation:"SUM和AVG只适用于数值字段；COUNT可用于任意字段；MAX和MIN也可用于文本、日期字段（按字母或日期顺序）。"}
+  ],
+  "3-2": [
+    {type:"single",text:"SQL中，向表中插入一条新记录使用的命令是：",options:["INSERT INTO","UPDATE","ADD RECORD","APPEND"],answer:0,explanation:"INSERT INTO 表名 (字段1,字段2) VALUES (值1,值2) 是SQL中插入新记录的标准语法。"},
+    {type:"fill",text:"SQL中，修改表中数据的命令关键字是_______。",answer:"UPDATE",explanation:"UPDATE 表名 SET 字段=新值 WHERE 条件，用于修改满足条件的记录中指定字段的值。"},
+    {type:"single",
+     text:"下面SQL语句的执行结果是什么？",
+     code:"UPDATE 学生 SET 成绩 = 成绩 + 5\nWHERE 班级 = '高一1班'",
+     options:["将所有学生成绩加5","将高一1班所有学生的成绩加5分","删除高一1班成绩等于5的记录","查询高一1班的学生成绩"],answer:1,explanation:"UPDATE...SET...WHERE：将'高一1班'所有学生的成绩字段值在原值基础上增加5分。"},
+    {type:"single",text:"SQL中，DELETE语句若不加WHERE条件，将会：",options:["不执行任何操作","只删除第一条记录","删除表中所有记录","删除整个表"],answer:2,explanation:"DELETE FROM 表名 不加WHERE条件会删除表中所有记录！但表结构保留。执行前务必确认条件正确。"},
+    {type:"judge",text:"SQL中，INSERT语句插入数据时，VALUES中值的顺序必须与字段名列表的顺序一一对应。",answer:true,explanation:"INSERT INTO 表(字段1,字段2) VALUES(值1,值2)：VALUES中的值必须按字段列表的顺序依次对应。"},
+    {type:"single",text:"以下SQL语句正确的是：",options:["DELETE FROM 学生 WHERE 学号=1001","DELETE 学生 WHERE 学号=1001","REMOVE FROM 学生 WHERE 学号=1001","DELETE * FROM 学生 WHERE 学号=1001"],answer:0,explanation:"DELETE FROM的标准语法是：DELETE FROM 表名 WHERE 条件，不需要加字段名或*号。"},
+    {type:"fill",text:"SQL中，'INSERT INTO 学生(姓名,年龄) VALUES(_______,_______)' 插入一条姓名为'李明'、年龄18的记录，括号内应填：",answer:"'李明',18",explanation:"字符串值用单引号括起来，数字值直接写。所以VALUES('李明',18)，注意姓名是文本需加引号。"},
+    {type:"single",text:"SQL中，CREATE TABLE语句的作用是：",options:["创建查询","创建新的数据表","创建数据库","创建视图"],answer:1,explanation:"CREATE TABLE 表名(字段1 类型,字段2 类型...) 用于创建新的数据库表结构（DDL数据定义语言）。"},
+    {type:"single",text:"下列SQL语句中，能查询学生表中年龄在18到20岁之间（含）的学生的是：",options:["SELECT * FROM 学生 WHERE 年龄=18 TO 20","SELECT * FROM 学生 WHERE 年龄 BETWEEN 18 AND 20","SELECT * FROM 学生 WHERE 年龄 IN (18,20)","SELECT * FROM 学生 WHERE 年龄>=18 OR 年龄<=20"],answer:1,explanation:"BETWEEN 18 AND 20等价于>=18 AND <=20，包含边界值。注意最后一项是OR（错的），应该是AND。"},
+    {type:"judge",text:"在Access中，可以在查询的SQL视图中执行DDL语句（如CREATE TABLE）。",answer:false,explanation:"Access的查询SQL视图主要支持DML（SELECT/INSERT/UPDATE/DELETE），不支持DDL（CREATE TABLE等），DDL需要通过界面操作。"}
+  ],
+  "4-0": [
+    {type:"single",text:"在Access中，窗体的主要功能是：",options:["存储数据","提供用户友好的数据交互界面","直接打印报告","执行SQL语句"],answer:1,explanation:"窗体是Access与用户交互的界面对象，提供友好的数据浏览、输入和修改界面，而不直接存储数据。"},
+    {type:"single",text:"Access窗体共分几个节（Section）？",options:["2个：窗体页眉和主体","3个：窗体页眉、主体、窗体页脚","5个：窗体页眉、页面页眉、主体、页面页脚、窗体页脚","4个：窗体页眉、页面页眉、主体、窗体页脚"],answer:2,explanation:"窗体完整的5个节：窗体页眉、页面页眉、主体、页面页脚、窗体页脚。默认显示3个，可添加页面页眉/脚。"},
+    {type:"judge",text:"在Access中，使用窗体向导创建的窗体，之后仍可在设计视图中修改。",answer:true,explanation:"无论是通过向导还是自动创建的窗体，都可以在设计视图中进一步修改和自定义。"},
+    {type:"single",text:"在Access窗体中，'绑定型'控件的含义是：",options:["控件固定在窗体上不能移动","控件与数据表字段相连，显示和修改实际数据","控件只能显示文本","控件不能被用户操作"],answer:1,explanation:"绑定型控件与数据表或查询的字段绑定，直接显示和修改数据库中的数据。非绑定控件不与字段关联。"},
+    {type:"fill",text:"Access窗体中，通常用于浏览每条记录的导航按钮位于窗体的_______部分。",answer:"底部",explanation:"Access窗体底部的记录导航器（|< < > >|）用于在记录之间导航，还显示当前记录号和总记录数。"},
+    {type:"single",text:"在Access窗体设计中，要查看窗体的实际运行效果，应切换到：",options:["设计视图","布局视图","窗体视图","数据表视图"],answer:2,explanation:"窗体视图（Form View）是窗体的运行状态，显示实际数据，可以进行数据的浏览和输入操作。"},
+    {type:"single",text:"Access提供了哪种窗体可以同时以表格形式显示多条记录？",options:["单个窗体","数据表窗体","分割窗体","主/子窗体"],answer:1,explanation:"数据表窗体以类似表格的格式同时显示多条记录；单个窗体每次只显示一条记录。"},
+    {type:"judge",text:"在Access中，子窗体（Subform）可以嵌入到主窗体中，用于显示相关表的多条记录。",answer:true,explanation:"主/子窗体结构：主窗体显示主表的一条记录，子窗体以表格形式显示从表中与之相关联的多条记录。"},
+    {type:"single",text:"在Access窗体中，'标签'控件（Label）主要用于：",options:["输入数据","显示静态说明文字","执行命令","显示图片"],answer:1,explanation:"标签控件（Label）用于显示固定的说明性文字，不与数据绑定，不能用于输入数据。"},
+    {type:"single",text:"Access窗体的'数据来源'属性指定的是：",options:["窗体的数据类型","窗体数据的来源表或查询","窗体文件的保存路径","窗体使用的字体"],answer:1,explanation:"窗体的'记录源'（数据来源）属性指定窗体所基于的表或查询，是窗体显示数据的根本来源。"}
+  ],
+  "4-1": [
+    {type:"single",text:"在Access窗体中，用于输入和显示文本数据的最基本控件是：",options:["标签","文本框","组合框","列表框"],answer:1,explanation:"文本框（Text Box）是最常用的输入控件，可以绑定数据字段，用于输入和显示文本、数字、日期等数据。"},
+    {type:"single",text:"在Access中，组合框（ComboBox）与列表框（ListBox）的主要区别是：",options:["组合框不能绑定数据源","组合框折叠时只显示当前值，可手动输入；列表框始终展开显示","列表框可以多选，组合框不可以","组合框只能显示数字"],answer:1,explanation:"组合框折叠时只显示一项（可手动输入新值）；列表框始终展开显示所有选项。两者都可绑定数据源。"},
+    {type:"judge",text:"Access窗体中的命令按钮（Command Button）可以通过绑定宏或事件过程来执行特定操作。",answer:true,explanation:"命令按钮可以在'单击'等事件中绑定宏或VBA代码，实现查找、打开报表、关闭窗体等各种操作。"},
+    {type:"fill",text:"在Access窗体设计中，单击控件后出现的可以调整控件大小的8个黑色小方块称为_______。",answer:"控件句柄",explanation:"选中控件后出现的8个黑色小方块是调整大小的控件句柄，拖动可调整大小；左上角橙色方块用于移动。"},
+    {type:"single",text:"在Access窗体中，'选项按钮'（Option Button）通常与什么控件配合使用，实现单选功能？",options:["标签","文本框","选项组","组合框"],answer:2,explanation:"选项按钮（单选按钮）通常放在选项组（Option Group）控件中，实现在多个选项中只能选一个的功能。"},
+    {type:"single",text:"在Access窗体中，要在字段值变化时自动执行操作，应在哪个事件上绑定代码？",options:["OnLoad","OnChange/AfterUpdate","OnClose","OnOpen"],answer:1,explanation:"AfterUpdate（更新后）或OnChange（更改时）事件在字段值发生变化时触发，可以在此执行验证或其他操作。"},
+    {type:"single",text:"在Access窗体中，'图像'控件（Image）用于：",options:["显示数据表中的OLE图片字段","显示静态背景图片","拍摄照片","绘制图形"],answer:0,explanation:"图像控件可以绑定表中的OLE字段，显示存储在数据库中的图片数据，如员工照片、产品图片等。"},
+    {type:"judge",text:"在Access中，窗体控件的'Tab键次序'决定用户按Tab键时焦点在控件间跳转的顺序。",answer:true,explanation:"Tab键次序（Tab Order）设置用户按Tab键时，焦点（光标）在各控件之间移动的顺序，提高操作效率。"},
+    {type:"single",text:"Access窗体的'格式'属性中，'弹出方式'设为'是'时，窗体会：",options:["以全屏方式打开","以浮动弹出窗口方式打开，始终显示在其他窗口之上","自动关闭","显示在任务栏上"],answer:1,explanation:"弹出方式（Pop Up）=是时，窗体以弹出方式显示，始终浮于其他Access对象窗口之上。"},
+    {type:"single",text:"在Access窗体中，要显示当前日期时间，在文本框的控件来源中应输入：",options:["=Date()","=Now()","=Today()","=Current()"],answer:1,explanation:"Now()函数返回当前日期和时间，Date()只返回日期，Time()只返回时间。在控件来源中用=Now()表达式显示。"}
+  ],
+  "5-0": [
+    {type:"single",text:"在Access中，报表的主要功能是：",options:["存储数据","实时修改数据","格式化并打印输出数据","提供数据输入界面"],answer:2,explanation:"报表专用于数据的格式化和打印输出，可以对数据进行分组、统计和美化，但不能修改数据。"},
+    {type:"single",text:"Access报表中，用于每个分组开始时显示分组信息的节是：",options:["报表页眉","组页眉","主体","页面页眉"],answer:1,explanation:"组页眉（Group Header）在每个分组的开始处显示，通常放置分组字段和分组标题。组页脚显示分组汇总。"},
+    {type:"judge",text:"在Access报表中，'报表页眉'节的内容只在报表的第一页开头出现一次。",answer:true,explanation:"报表页眉只在报表最开始出现一次（封面信息）；页面页眉则在每页顶部都出现（列标题等）。"},
+    {type:"single",text:"在Access报表中，要显示当前页码，应在文本框的控件来源中输入：",options:['="第"&[Page]&"页"','=Page()','="第"&Page&"页"','=页码'],answer:0,explanation:'[Page]是报表的内置页码属性，[Pages]是总页数。"第"&[Page]&"页"可显示"第1页"的效果。'},
+    {type:"fill",text:"在Access报表中，每条记录的详细数据在_______节中显示。",answer:"主体",explanation:"主体节（Detail Section）显示数据源中每条记录的详细信息，每条记录对应一次主体节的输出。"},
+    {type:"single",text:"在Access中，使用'报表向导'创建分组报表时，可以：",options:["最多设置4个分组级别","只能设置1个分组级别","最多设置10个分组级别","不限制分组级别数量"],answer:0,explanation:"Access报表向导最多支持4个分组级别，如按年份→月份→部门→类别进行多级分组统计。"},
+    {type:"single",text:"在Access报表中，要在每页底部显示页码和日期，应将这些控件放在：",options:["报表页眉","页面页眉","主体","页面页脚"],answer:3,explanation:"页面页脚（Page Footer）在每页底部显示，适合放置页码、打印日期等每页都需要的信息。"},
+    {type:"judge",text:"Access报表中的'强制分页'属性可以设置在组之前或之后换页。",answer:true,explanation:"在组页眉/脚的强制分页（Force New Page）属性中，可以设置在该组之前（Before）或之后（After）换页。"},
+    {type:"single",text:"Access报表中，标签（Label）控件与文本框（Text Box）控件的主要区别是：",options:["标签不能设置字体","文本框只能显示数字","标签显示固定文字，文本框显示动态数据","标签比文本框更大"],answer:2,explanation:"标签显示设计时固定的说明性文字（如列标题）；文本框绑定字段，动态显示数据库中的实际数据。"},
+    {type:"single",text:"在Access中，以下哪种方式不能创建报表？",options:["报表向导","自动报表","空白报表（手动设计）","使用表直接生成"],answer:3,explanation:"创建报表的方式：报表向导、空报表（手动设计）、报表设计视图、自动报表（基于表/查询）。没有'表直接生成'的一键方式。"}
+  ],
+  "5-1": [
+    {type:"single",text:"在Access中，宏（Macro）是：",options:["一段VBA程序代码","一系列操作命令的集合","一种查询类型","数据库的备份文件"],answer:1,explanation:"宏是一系列Access操作命令的有序集合，可以自动执行重复性任务，无需编写VBA代码。"},
+    {type:"single",text:"在Access宏中，'OpenForm'操作的作用是：",options:["创建新窗体","打开已有的窗体","关闭当前窗体","修改窗体属性"],answer:1,explanation:"OpenForm操作打开指定的窗体，可以设置视图模式（窗体视图/设计视图）和过滤条件等参数。"},
+    {type:"judge",text:"在Access中，一个宏可以包含多个操作命令，这些命令按顺序依次执行。",answer:true,explanation:"宏中的多个操作按从上到下的顺序依次执行，也可以使用条件（If）控制某些操作是否执行。"},
+    {type:"fill",text:"在Access宏中，用于关闭当前对象（如窗体或报表）的宏操作是_______。",answer:"CloseWindow",explanation:"CloseWindow操作关闭指定的Access对象窗口，如窗体、报表等。Close操作在旧版Access中也可用。"},
+    {type:"single",text:"在Access中，'AutoExec'宏的特殊之处是：",options:["只能执行一次","打开数据库时自动运行","只用于报表","不能包含条件"],answer:1,explanation:"名为'AutoExec'的宏是特殊的启动宏，在数据库打开时会自动执行，常用于显示欢迎窗体等初始化操作。"},
+    {type:"single",text:"Access中，以下关于数据导出的说法正确的是：",options:["Access数据只能导出为Excel格式","Access数据可以导出为多种格式，包括Excel、CSV、文本文件等","导出数据会删除原数据","只能通过宏才能导出数据"],answer:1,explanation:"Access支持将数据导出为多种格式：Excel(.xlsx/.xls)、文本(.txt)、CSV、XML、PDF等，通过'外部数据'选项卡操作。"},
+    {type:"judge",text:"在Access中，可以将Excel电子表格中的数据导入到Access数据库中。",answer:true,explanation:"Access提供了从Excel、文本文件、其他数据库等多种来源导入数据的功能，通过'外部数据'选项卡操作。"},
+    {type:"single",text:"在Access中，'MsgBox'宏操作（或MessageBox）的作用是：",options:["向表中插入消息","显示一个对话框消息","发送电子邮件","在报表上添加文字"],answer:1,explanation:"MsgBox/MessageBox操作会弹出一个显示指定消息文本的对话框，常用于向用户提示操作结果或警告信息。"}
+  ]
+};
+
+// 游戏配置
+const GAME_CONFIG = {
+  timePerQuestion: 30,
+  scorePerCorrect: 10,
+  scoreBonus: 5  // 时间越快奖励分
+};
