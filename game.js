@@ -142,6 +142,8 @@ function startLevel(levelId) {
 }
 
 function showQuestion() {
+  state.answered = false;
+  state.userSortAnswer = [];
   const q = state.questions[state.currentQIndex];
   if (!q) { endLevel(); return; }
 
